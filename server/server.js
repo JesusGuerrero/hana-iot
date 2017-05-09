@@ -1,5 +1,5 @@
 var gpio = require('onoff').Gpio,
-    RaspiCam = require('raspicam'),
+    camera = require('./camera'),
     led1 = new gpio(27, 'out'),
     led2 = new gpio(22, 'out'),
     buzzer = new gpio(12, 'out');
@@ -44,6 +44,11 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
               buzzer.writeSync(0);
           }, 3000);
       });
+      
+      //Raspicam
+      socket.on('event:camera', function(){
+         camera.start(); 
+      });
 
   
     //BEGIN LISTENING FOR SOCKET MESSAGES FROM CLIENTS
@@ -51,7 +56,7 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
     //socket.on('myCustomMessage', function( val ){ console.log( val ); });
 
   });
-
+    camera.setSocket( io );
 
   var state = false;
   setInterval( function(){
