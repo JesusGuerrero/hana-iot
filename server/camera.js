@@ -32,35 +32,43 @@ var stopFunction = function(){
 };
 var setModeFunction = function( mode ){
   if( !isAvailable ) { return; }
-  type = ['photo','video','timelapse'].indexOf( mode ) >= 0 ? mode : type;
-  if( mode === 'photo' ) {
-    camera = new RaspiCam({
-      mode: 'photo',
-      output: imagePath + 'image.jpg',
-      height: 720,
-      width: 1280,
-      quality: 100
-    });
-  } else if( mode === 'timelapse' ){
-    camera = new RaspiCam({
-      mode: 'timelapse',
-      output: imagePath + 'myImg_%04d.jpg',
-      height: 720,
-      width: 1280,
-      quality: 100,
-      timeout: 60000, // record for 60 seconds
-      tl: 1000	  // take a picture every 1 second
-    });
-  } else if( mode === 'video' ){
-    camera = new RaspiCam({
-      mode: 'video',
-      output: videoPath + 'video.h264',
-      width: 1280,
-      height: 720,
-      bitrate: 3000000,
-      timeout: 60000,
-      framerate: 23
-    });
+  type = ['live', 'photo','video','timelapse'].indexOf( mode ) >= 0 ? mode : type;
+  if( mode === 'live' ) {
+    EXEC('theuv')
+        .then( function(){
+            console.log('running uv4l');
+        });
+  } else {
+    EXEC('sudo pkill uv4l');
+    if( mode === 'photo' ) {
+      camera = new RaspiCam({
+        mode: 'photo',
+        output: imagePath + 'image.jpg',
+        height: 720,
+        width: 1280,
+        quality: 100
+      });
+    } else if( mode === 'timelapse' ){
+      camera = new RaspiCam({
+        mode: 'timelapse',
+        output: imagePath + 'myImg_%04d.jpg',
+        height: 720,
+        width: 1280,
+        quality: 100,
+        timeout: 60000, // record for 60 seconds
+        tl: 1000	  // take a picture every 1 second
+      });
+    } else if( mode === 'video' ){
+      camera = new RaspiCam({
+        mode: 'video',
+        output: videoPath + 'video.h264',
+        width: 1280,
+        height: 720,
+        bitrate: 3000000,
+        timeout: 60000,
+        framerate: 23
+      });
+    } 
   }
   camera.on('exit', onExit);
   camera.on('read', onRead);
