@@ -1,13 +1,13 @@
 var gpio = require('onoff').Gpio,
-    camera = require('./camera'),
-    cameraMode = camera.status.mode,
+    camera = require('./camera')(),
+    cameraMode = camera.status().mode,
     led1 = new gpio(27, 'out'),
     led2 = new gpio(22, 'out'),
     buzzer = new gpio(12, 'out');
 
 var ledState = 0;
 
-process.env.NODE_URL='192.168.0.18';
+process.env.NODE_URL='192.168.0.16';
 
 require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 
@@ -43,11 +43,12 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
       });
       //Raspicam
       socket.on('event:camera:photo', function(){
-        if( cameraMode !== 'photo') {
-          camera.setMode('photo');
-          cameraMode = 'photo';
-        }
-         camera.start(); 
+        
+          camera.setMode('photo', function(){
+	    console.log('inside callback');
+	    camera.start(); 
+          });
+        
       });
       socket.on('event:camera:video', function(){
         if( cameraMode !== 'video') {
@@ -64,10 +65,8 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
         camera.start();
       });
       socket.on('event:camera:live', function(){
-        if( cameraMode !== 'live') {
-          camera.setMode('live');
-          cameraMode = 'live';
-        }
+	console.log('going live');
+        camera.setMode('live');
       });
   
     //BEGIN LISTENING FOR SOCKET MESSAGES FROM CLIENTS

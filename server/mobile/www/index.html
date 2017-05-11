@@ -32,7 +32,8 @@
 
     <!-- your app's js -->
     <script type="text/javascript">
-      var socket = io('http://10.0.1.30:6085');
+      var MAHRIO_IP_PORT = 'http://192.168.0.16:6085';
+      var socket = io( MAHRIO_IP_PORT );
 
       socket.on('event:hello', function(){
         console.log('Hello from server through socket');

@@ -1,14 +1,14 @@
 <ion-view view-title="Home">
   <ion-content class="padding">
   <H2 class="padding-bottom">Live Stream</H2>
-    <img src="http://10.0.1.30:8080/stream/video.mjpeg" alt="">
+    <img ng-src="{{view}}" alt="">
 
     <div class="row">
       <div class="col-25 padding-side">
-        <button class="button button-positive button-block">Photo</button>
+        <button class="button button-positive button-block" ng-click="takePicture()">Photo</button>
       </div>
       <div class="col-25 padding-side">
-        <button class="button button-positive button-block">Video</button>
+        <button class="button button-positive button-block" ng-click="showLive()">Live</button>
       </div>
       <div class="col-25 padding-side">
         <button class="button button-positive button-block" ng-click="turnLight()">LED</button>

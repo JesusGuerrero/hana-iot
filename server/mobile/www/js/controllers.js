@@ -1,6 +1,7 @@
 angular.module('starter.controllers', [])
 
   .controller('HomeCtrl', function($scope) {
+    $scope.view = 'http://192.168.0.16:9090/stream/video.mjpeg';
     $scope.turnLight = function(){
       console.log("Light");
       socket.emit('event:light', true);
@@ -11,6 +12,25 @@ angular.module('starter.controllers', [])
       socket.emit('event:buzzer', true);
     };
 
+    $scope.takePicture = function(){
+      console.log("Taking Pic");
+      socket.emit('event:camera:photo');
+    }
+    $scope.showLive = function(){
+      console.log("Turning Live");
+      socket.emit('event:camera:live');
+    }
+
+    socket.on('hardware:camera:done', function(url){
+      console.log( url );
+$scope.$apply(function(){
+      if( url == 'live' ){
+        $scope.view = 'http://192.168.0.16:9090/stream/video.mjpeg';
+      } else {
+	$scope.view = MAHRIO_IP_PORT + url;
+      }
+});
+    });
 
   })
 
