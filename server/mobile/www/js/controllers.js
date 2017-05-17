@@ -1,7 +1,7 @@
 angular.module('starter.controllers', [])
 
   .controller('HomeCtrl', function($scope) {
-    $scope.view = 'http://10.0.1.30:9090/stream/video.mjpeg';
+    $scope.view = 'http://hana.local:9090/stream/video.mjpeg';
     $scope.turnLight = function(){
       console.log("Light");
       socket.emit('event:light', true);
@@ -25,7 +25,7 @@ angular.module('starter.controllers', [])
       console.log( url );
 $scope.$apply(function(){
       if( url == 'live' ){
-        $scope.view = 'http://10.0.1.30:9090/stream/video.mjpeg';
+        $scope.view = 'http://hana.local:9090/stream/video.mjpeg';
       } else {
 	$scope.view = MAHRIO_IP_PORT + url;
       }
@@ -63,10 +63,10 @@ $scope.$apply(function(){
 
     $scope.pushNotificationChange = function() {
       console.log('Push Notification Change', $scope.pushNotification.checked);
-      if($scope.pushNotification.checked == true){
-        socket.emit('event:textSMS', $scope.pushNotification.checked);
-        console.log("turn on the SMS")
-      }
+
+        socket.emit('event:textSMS', true);
+        console.log("turn on the SMS");
+
 
     };
 

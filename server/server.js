@@ -62,7 +62,7 @@ console.log(ledState);
           }, 3000);
       });
          socket.on('event:textSMS', function () {
-	     console.log("turn on SMS ");
+	     console.log("Receive turn on SMS signal");
              
 	     motion.watch( function(err, val) {
                  if (err) {
@@ -127,4 +127,10 @@ console.log(ledState);
   }, 1000);
 
   console.log('Server Ready');
+});
+
+process.on('SIGINT', function(){
+    motion.unexport();
+    buzzer.unexport();
+    process.exit();
 });
