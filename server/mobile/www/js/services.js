@@ -263,7 +263,7 @@ angular.module('starter.services', [])
   var records = [{
     id: 0,
     name: 'Testing',
-    face: severIPAddress + '/images/myImg_2017-05-17T01:36:18.025Z.jpg',
+    face: severIPAddress + '/images/myImg_2017-05-17T20:56:31.332Z.jpg',
     date: '03.19.07',
     time: '6:35',
     food: 'Millet',
