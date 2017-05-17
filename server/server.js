@@ -66,7 +66,25 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 
       });
 
-
+      //motion sensor
+      motion.watch( function(err, val) {
+          console.log('Motion active');
+          if (err) {
+              console.log('Motion in 21 Error');
+              return;
+          }
+          if (val) {
+              console.log('motion sensor detect something');
+              // client.messages.create({
+              //     body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
+              //     to: '+14159990504',  // Text this number
+              //     from: '+14159694541' // From a valid Twilio number
+              // }).then(function(message){
+              //     console.log(message.sid)
+              //     console.log('message sent');
+              // });
+          }
+      });
 
 
       //Raspicam
@@ -102,23 +120,7 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
     //socket.on('myCustomMessage', function( val ){ console.log( val ); });
 
   });
-    motion.watch( function(err, val) {
-        if (err) {
-            console.log('Motion in 21 Error');
-            return;
-        }
-        if (val) {
-            console.log('motion sensor detect something');
-            // client.messages.create({
-            //     body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
-            //     to: '+14159990504',  // Text this number
-            //     from: '+14159694541' // From a valid Twilio number
-            // }).then(function(message){
-            //     console.log(message.sid)
-            //     console.log('message sent');
-            // });
-        }
-    });
+
 
   camera.setSocket( io );
 
