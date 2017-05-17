@@ -63,27 +63,26 @@ console.log(ledState);
       });
          socket.on('event:textSMS', function () {
 	     console.log("Receive turn on SMS signal");
-             
-	     motion.watch( function(err, val) {
-                 if (err) {
-                     console.log('Motion in 21 Error');
-                     return;
-                 }
-                 if (val) {
-                     console.log('motion sensor detect something');
-                     // client.messages.create({
-                     //     body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
-                     //     to: '+14159990504',  // Text this number
-                     //     from: '+14159694541' // From a valid Twilio number
-                     // }).then(function(message){
-                     //     console.log(message.sid)
-                     //     console.log('message sent');
-                     // });
-                 }
-             });
-        
+
          });
 
+      motion.watch( function(err, val) {
+          if (err) {
+              console.log('Motion in 21 Error');
+              return;
+          }
+          if (val) {
+              console.log('motion sensor detect something');
+              // client.messages.create({
+              //     body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
+              //     to: '+14159990504',  // Text this number
+              //     from: '+14159694541' // From a valid Twilio number
+              // }).then(function(message){
+              //     console.log(message.sid)
+              //     console.log('message sent');
+              // });
+          }
+      });
 
 
       //Raspicam
