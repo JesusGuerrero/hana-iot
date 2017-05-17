@@ -47,10 +47,10 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
           console.log("turn on light ");
           ledState = ledState + 1;
 
-console.log(ledState);
+          console.log(ledState);
           led1.writeSync(ledState % 2);
           led2.writeSync(ledState % 2);
-	  led3.writeSync(ledState % 2);
+          led3.writeSync(ledState % 2);
           led4.writeSync(ledState % 2);
       });
       //Buzzer
@@ -61,28 +61,12 @@ console.log(ledState);
               buzzer.writeSync(0);
           }, 3000);
       });
-         socket.on('event:textSMS', function () {
+      socket.on('event:textSMS', function () {
 	     console.log("Receive turn on SMS signal");
 
-         });
-
-      motion.watch( function(err, val) {
-          if (err) {
-              console.log('Motion in 21 Error');
-              return;
-          }
-          if (val) {
-              console.log('motion sensor detect something');
-              // client.messages.create({
-              //     body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
-              //     to: '+14159990504',  // Text this number
-              //     from: '+14159694541' // From a valid Twilio number
-              // }).then(function(message){
-              //     console.log(message.sid)
-              //     console.log('message sent');
-              // });
-          }
       });
+
+
 
 
       //Raspicam
@@ -118,6 +102,24 @@ console.log(ledState);
     //socket.on('myCustomMessage', function( val ){ console.log( val ); });
 
   });
+    motion.watch( function(err, val) {
+        if (err) {
+            console.log('Motion in 21 Error');
+            return;
+        }
+        if (val) {
+            console.log('motion sensor detect something');
+            // client.messages.create({
+            //     body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
+            //     to: '+14159990504',  // Text this number
+            //     from: '+14159694541' // From a valid Twilio number
+            // }).then(function(message){
+            //     console.log(message.sid)
+            //     console.log('message sent');
+            // });
+        }
+    });
+
   camera.setSocket( io );
 
   var state = false;
