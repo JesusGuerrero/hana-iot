@@ -1,7 +1,6 @@
 //IOT sensors from raspberry pi
 var gpio = require('onoff').Gpio,
     camera = require('./camera')(),
-    cameraMode = camera.status().mode,
     led1 = new gpio(26, 'out'),
     led2 = new gpio(12, 'out'),
     led3 = new gpio(24, 'out'),
@@ -62,6 +61,7 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
               buzzer.writeSync(0);
           }, 3000);
       });
+      
       socket.on('event:textSMS', function () {
           textControl = !textControl;
           if (textControl){
@@ -142,7 +142,7 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
     //socket.on('myCustomMessage', function( val ){ console.log( val ); });
 
   });
-
+    camera.setSocket( io );
 
   camera.setSocket( io );
 
