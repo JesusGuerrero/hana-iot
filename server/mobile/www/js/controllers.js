@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-  .controller('HomeCtrl', function($scope {
+  .controller('HomeCtrl', function($scope) {
 	  $scope.mode = 'live';
     $scope.live = 'http://192.168.0.19:9090/stream/video.mjpeg';
     $scope.view = 'http://192.168.0.19:9090/stream/video.mjpeg';
