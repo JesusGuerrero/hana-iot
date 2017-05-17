@@ -32,6 +32,7 @@ var startFunction = function(){
 var stopFunction = function(){
   camera.stop();
 };
+
 var setModeFunction = function( mode, callback ){
   if( !isAvailable ) { return; }
   type = ['live', 'photo','video','timelapse'].indexOf( mode ) >= 0 ? mode : type;
