@@ -2,11 +2,11 @@
 var gpio = require('onoff').Gpio,
     camera = require('./camera')(),
     cameraMode = camera.status().mode,
-    led1 = new gpio(21, 'out'),
+    led1 = new gpio(26, 'out'),
     led2 = new gpio(12, 'out'),
     led3 = new gpio(24, 'out'),
     led4 = new gpio(16, 'out'),
-    motion = new gpio(4, 'in', 'both'),
+    motion = new gpio(21, 'in', 'both'),
     buzzer = new gpio(18, 'out');
 
 var ledState = 0;
@@ -66,25 +66,36 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 
       });
 
-      //motion sensor
+
       motion.watch( function(err, val) {
-          console.log('Motion active');
-          if (err) {
-              console.log('Motion in 21 Error');
-              return;
+          if( err ) { console.log('Motion in 21 Error'); return; }
+
+          console.log('Motion in 21 is ' +(val ? 'ACTIVE' : 'INACTIVE') + ' : ' + new Date().toLocaleString() );
+          if( io ) {
+              io.sockets.emit('event:motion', val);
+              console.log('Motion in ' + val);
           }
-          if (val) {
-              console.log('motion sensor detect something');
-              // client.messages.create({
-              //     body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
-              //     to: '+14159990504',  // Text this number
-              //     from: '+14159694541' // From a valid Twilio number
-              // }).then(function(message){
-              //     console.log(message.sid)
-              //     console.log('message sent');
-              // });
-          }
+
       });
+      //motion sensor
+      // motion.watch( function(err, val) {
+      //     console.log('Motion active');
+      //     if (err) {
+      //         console.log('Motion in 21 Error');
+      //         return;
+      //     }
+      //     if (val) {
+      //         console.log('motion sensor detect something');
+      //         // client.messages.create({
+      //         //     body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
+      //         //     to: '+14159990504',  // Text this number
+      //         //     from: '+14159694541' // From a valid Twilio number
+      //         // }).then(function(message){
+      //         //     console.log(message.sid)
+      //         //     console.log('message sent');
+      //         // });
+      //     }
+      // });
 
 
       //Raspicam
