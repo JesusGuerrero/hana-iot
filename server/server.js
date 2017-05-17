@@ -63,20 +63,21 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
       });
       socket.on('event:textSMS', function () {
 	     console.log("Receive turn on SMS signal");
+          motion.watch( function(err, val) {
+              if( err ) { console.log('Motion in 21 Error'); return; }
+
+              console.log('Motion in 21 is ' +(val ? 'ACTIVE' : 'INACTIVE') + ' : ' + new Date().toLocaleString() );
+              if( io ) {
+                  io.sockets.emit('event:motion', val);
+                  console.log('Motion in ' + val);
+              }
+
+          });
 
       });
 
 
-      motion.watch( function(err, val) {
-          if( err ) { console.log('Motion in 21 Error'); return; }
 
-          console.log('Motion in 21 is ' +(val ? 'ACTIVE' : 'INACTIVE') + ' : ' + new Date().toLocaleString() );
-          if( io ) {
-              io.sockets.emit('event:motion', val);
-              console.log('Motion in ' + val);
-          }
-
-      });
       //motion sensor
       // motion.watch( function(err, val) {
       //     console.log('Motion active');
