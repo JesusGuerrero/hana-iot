@@ -258,7 +258,7 @@ angular.module('starter.services', [])
 
 .factory('Records', function() {
   // Might use a resource here that returns a JSON array
-  var severIPAddress = "http://10.0.1.30:6085";
+  var severIPAddress = "http://hana.local:6085";
   // Some fake testing data
   var records = [{
     id: 0,
