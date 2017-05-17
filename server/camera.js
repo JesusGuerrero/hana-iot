@@ -32,7 +32,10 @@ var startFunction = function(){
 var stopFunction = function(){
   camera.stop();
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> Fixing live and photo switching
 var setModeFunction = function( mode, callback ){
   if( !isAvailable ) { return; }
   type = ['live', 'photo','video','timelapse'].indexOf( mode ) >= 0 ? mode : type;
