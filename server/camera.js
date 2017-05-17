@@ -1,6 +1,12 @@
 var Path = require('path'),
   Promise = require('promise'),
-  RaspiCam = require('raspicam');
+  RaspiCam = require('raspicam'),
+  UV4L_CMD = "sudo uv4l -nopreview --auto-video_nr --driver raspicam";
+  UV4L_CMD += " --encoding mjpeg --width 640 --height 480 ";
+  UV4L_CMD += "--framerate 20 --server-option '--port=9090' ";
+  UV4L_CMD += "--server-option '--max-queued-connections=30' ";
+  UV4L_CMD += "--server-option '--max-streams=25' --server-option";
+  UV4L_CMD += " '--max-threads=29'";
 
 const EXEC = Promise.denodeify( require('child_process').exec );
 
@@ -32,30 +38,7 @@ var startFunction = function(){
 var stopFunction = function(){
   camera.stop();
 };
-var setModeFunction = function( mode, callback ){
-  if( !isAvailable ) { return; }
-  type = ['live', 'photo','video','timelapse'].indexOf( mode ) >= 0 ? mode : type;
-console.log(mode, currentMode );
-  if( mode === 'live' && mode !== currentMode ) {
-    console.log('switching to live');
-    EXEC("sudo uv4l -nopreview --auto-video_nr --driver raspicam --encoding mjpeg --width 640 --height 480 --framerate 20 --server-option '--port=9090' --server-option '--max-queued-connections=30' --server-option '--max-streams=25' --server-option '--max-threads=29'")
-      .then(function(error, stdout, stderr){
-	console.log('stdout: ' + stdout);
-        console.log('stderr: ' + stderr);
-        if (error !== null) {
-          console.log('exec error: ' + error);
-        }
-        socket.emit('hardware:camera:done', 'live');
-      });
-    currentMode = 'live';
-  } else if( mode !== 'live') {
-    EXEC('sudo pkill uv4l').then(function(error, stdout, stderr) {
-      console.log('stdout: ' + stdout);
-      console.log('stderr: ' + stderr);
-      if (error !== null) {
-        console.log('exec error: ' + error);
-      }
-      console.log('killed u4vl');
+var applyMode = function(mode, callback){
       if( mode === 'photo' && mode !== currentMode ) {
         camera = new RaspiCam({
           mode: 'photo',
@@ -89,7 +72,36 @@ console.log(mode, currentMode );
       if( typeof callback == 'function'){
         setTimeout( function(){ camera.on('exit', onExit); callback(); }, 1000 );
       }
-    }, function(err){ console.log(err); });
+};
+
+var setModeFunction = function( mode, callback ){
+  if( !isAvailable ) { return; }
+  type = ['live', 'photo','video','timelapse'].indexOf( mode ) >= 0 ? mode : type;
+  console.log(mode, currentMode );
+  if( mode === 'live' ) {
+    console.log('switching to live');
+    EXEC('ps aux').then(function(data, stdout, stderr){
+		console.log( data );
+		if( !data.match( /uv4l -nopreview/ ) ) {
+			EXEC( UV4L_CMD )
+			  .then(function(error, stdout, stderr){
+				socket.emit('hardware:camera:done', 'live');
+			  });
+		}
+	});
+  } else if( mode !== 'live') {
+    EXEC('ps aux').then(function(data, stdout, stderr){
+		console.log( data );
+		if( data.match( /uv4l/ ) && data.match( /uv4l/ ).length ) {
+			console.log( 'found so and so', data.match( /uv4l/ ).length );
+			EXEC('sudo pkill uv4l').then(function(error, stdout, stderr) {
+				applyMode( mode, callback);
+			});
+		} else {
+			console.log('apply mode');
+			applyMode( mode, callback );
+		}
+    });
   }
 };
 var notifyClients = function( filepath ){

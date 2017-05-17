@@ -7,7 +7,15 @@ var gpio = require('onoff').Gpio,
 
 var ledState = 0;
 
-process.env.NODE_URL='192.168.0.16';
+//ip address
+process.env.NODE_URL='192.168.0.19';
+
+// Twilio, the SMS system service
+var accountSid = 'AC70731db98f0a7ad0863697704e8e4716';
+var authToken = '281c19c81e4762364b53524f5bf7eadc';
+var twilio = require('twilio');
+var client = new twilio(accountSid, authToken);
+
 
 require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 
@@ -20,6 +28,17 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
       }
     }
   });
+  
+/*
+    client.messages.create({
+        body: 'Server Running',
+        to: '+14159990504',  // Text this number
+        from: '+14159694541' // From a valid Twilio number
+    }).then(function(message){
+        console.log(message.sid)
+        console.log('message sent');
+    });
+*/
 
   var io = require('socket.io').listen( server.listener );
   io.on('connection', function( socket ) {
@@ -41,31 +60,16 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
               buzzer.writeSync(0);
           }, 3000);
       });
+      
       //Raspicam
       socket.on('event:camera:photo', function(){
-        
-          camera.setMode('photo', function(){
-	    console.log('inside callback');
-	    camera.start(); 
-          });
-        
-      });
-      socket.on('event:camera:video', function(){
-        if( cameraMode !== 'video') {
-          camera.setMode('video');
-          cameraMode = 'video';
-        }
-        camera.start();
-      });
-      socket.on('event:camera:timelapse', function(){
-        if( cameraMode !== 'timelapse') {
-          camera.setMode('timelapse');
-          cameraMode = 'timelapse';
-        }
-        camera.start();
+        camera.setMode('photo', function(){
+	      console.log('inside callback');
+	      camera.start(); 
+        });
       });
       socket.on('event:camera:live', function(){
-	console.log('going live');
+	    console.log('going live');
         camera.setMode('live');
       });
   

@@ -1,7 +1,13 @@
 <ion-view view-title="Home">
   <ion-content class="padding">
   <H2 class="padding-bottom">Live Stream</H2>
-    <img ng-src="{{view}}" alt="">
+    <div ng-if="mode == 'live'">
+		<img ng-src="{{live}}" alt="">
+    </div>
+    <div ng-if="mode != 'live'">
+		<img ng-src="{{view}}" alt="">
+    </div>
+    
 
     <div class="row">
       <div class="col-25 padding-side">
