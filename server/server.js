@@ -15,8 +15,8 @@ var ledState = 0
 	, imageData = [];
 
 // Twilio, the SMS system servicegit
-var accountSid = 'ACa957470a6f2569a114d025aa45f1cc60';
-var authToken = 'd8f064aabedfb2dfc678bb3c16c25e4f';
+var accountSid = 'AC70731db98f0a7ad0863697704e8e4716';
+var authToken = '281c19c81e4762364b53524f5bf7eadc';
 var twilio = require('twilio');
 var client = new twilio(accountSid, authToken);
 
@@ -90,8 +90,8 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 				if( smsControl ) {
 					client.messages.create({
 						body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
-						to: '+14152143706',  // Text this number
-						from: '+18436477132' // From a valid Twilio number
+						to: '+14159990504',  // Text this number
+						from: '+14159694541' // From a valid Twilio number
 					}).then(function(message){
 						console.log('SMS Sent: ', message.sid);
 						smsControl = 0;
