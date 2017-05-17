@@ -2,8 +2,8 @@ angular.module('starter.controllers', [])
 
   .controller('HomeCtrl', function($scope) {
 	  $scope.mode = 'live';
-    $scope.live = 'http://192.168.0.19:9090/stream/video.mjpeg';
-    $scope.view = 'http://192.168.0.19:9090/stream/video.mjpeg';
+    $scope.live = 'http://hana.local:9090/stream/video.mjpeg';
+    $scope.view = 'http://hana.local:9090/stream/video.mjpeg';
     $scope.turnLight = function(){
       console.log("Light");
       socket.emit('event:light', true);
@@ -28,7 +28,7 @@ angular.module('starter.controllers', [])
 	  $scope.$apply(function(){
 		if( url == 'live' ){
 			$scope.mode = 'live';
-			$scope.view = 'http://192.168.0.19:9090/stream/video.mjpeg';
+			$scope.view = 'http://hana.local:9090/stream/video.mjpeg';
 		} else {
 			$scope.view = MAHRIO_IP_PORT + url;
 			$scope.mode = 'photo';
