@@ -61,7 +61,7 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
               buzzer.writeSync(0);
           }, 3000);
       });
-      socket.on('event:textSMS', function () {
+      socket.on('event:textSMS:true', function () {
 	     console.log("Receive turn on SMS signal");
           motion.watch( function(err, val) {
               if( err ) { console.log('Motion in 21 Error'); return; }
@@ -71,9 +71,7 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
                   io.sockets.emit('event:motion', val);
                   console.log('Motion in ' + val);
               }
-
           });
-
       });
 
 

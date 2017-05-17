@@ -67,7 +67,7 @@ $scope.$apply(function(){
           socket.emit('event:led:state', state = $scope.pushNotification.checked);
         console.log(state);
     };
-
+    $scope.pushNotification = { checked: false };
 
 
 
