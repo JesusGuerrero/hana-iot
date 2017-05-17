@@ -65,7 +65,7 @@ $scope.$apply(function(){
       console.log('Push Notification Change', $scope.pushNotification.checked);
 
           socket.emit('event:textSMS');
-        console.log(state);
+
     };
     $scope.pushNotification = { checked: false };
 

@@ -69,14 +69,19 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
               motion.watch( function(err, val) {
                   if( err ) { console.log('Motion in 21 Error'); return; }
 
-                  console.log('Motion in 21 is ' +(val ? 'ACTIVE' : 'INACTIVE') + ' : ' + new Date().toLocaleString() );
-                  if( io ) {
-                      io.sockets.emit('event:motion', val);
-                      console.log('Motion in ' + val);
+                  if( val ) {
+                      console.log('Motion in ON');
                   }
               });
           }else{
               console.log("turn off SMS");
+              motion.watch( function(err, val) {
+                  val = false;
+                  if( err ) { console.log('Motion in 21 Error'); return; }
+                  if( val ) {
+                      console.log('Motion in ON');
+                  }
+              });
           }
 
 
