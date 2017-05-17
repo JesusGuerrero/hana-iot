@@ -66,18 +66,10 @@ angular.module('starter.controllers', [])
   .controller('SettingCtrl', function($scope) {
 
     $scope.pushNotificationChange = function() {
-      console.log('Push Notification Change', $scope.pushNotification.checked);
-
-          socket.emit('event:textSMS');
-
+		console.log('Push Notification Change', $scope.pushNotification.checked);
+		socket.emit('event:textSMS', $scope.pushNotification.checked);
     };
     $scope.pushNotification = { checked: false };
-
-
-
-
-
-
   })
 
   .controller("AlertDetailCtrl", function($scope) {})

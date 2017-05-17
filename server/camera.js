@@ -70,7 +70,13 @@ var applyMode = function(mode, callback){
         });
       } 
       if( typeof callback == 'function'){
-        setTimeout( function(){ camera.on('exit', onExit); callback(); }, 1000 );
+		var time = currentTime;
+        setTimeout( function(){ 
+			camera.on('exit', onExit); 
+			
+			console.log( time );
+			callback( '/images/myImg_' + time + '.jpg'); 
+		}, 1000 );
       }
 };
 
@@ -81,7 +87,7 @@ var setModeFunction = function( mode, callback ){
   if( mode === 'live' ) {
     console.log('switching to live');
     EXEC('ps aux').then(function(data, stdout, stderr){
-		console.log( data );
+		//console.log( data );
 		if( !data.match( /uv4l -nopreview/ ) ) {
 			EXEC( UV4L_CMD )
 			  .then(function(error, stdout, stderr){
@@ -91,7 +97,7 @@ var setModeFunction = function( mode, callback ){
 	});
   } else if( mode !== 'live') {
     EXEC('ps aux').then(function(data, stdout, stderr){
-		console.log( data );
+		//console.log( data );
 		if( data.match( /uv4l/ ) && data.match( /uv4l/ ).length ) {
 			console.log( 'found so and so', data.match( /uv4l/ ).length );
 			EXEC('sudo pkill uv4l').then(function(error, stdout, stderr) {
@@ -129,6 +135,7 @@ var onExit = function(){
           .then( function(){ notifyClients(videoPath + 'timelapse' + currentTime + '.mp4'); });
       });
   } else {
+	  console.log('photo photo photo');
     notifyClients(imagePath + 'myImg_' + currentTime + '.jpg');
   }
 };
