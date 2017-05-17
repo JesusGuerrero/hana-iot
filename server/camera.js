@@ -14,6 +14,7 @@ var camera = null,
   socket = null,
   currentName = null,
   currentTime = null,
+  prevTime = null,
   currentMode = 'video',
   type = 'video',
   isAvailable = true,
@@ -29,6 +30,7 @@ var startFunction = function(){
 
   currentTime = new Date().toISOString();
   if( type === 'photo' ) {
+	  prevTime = currentTime;
     camera.set('output', imagePath + 'myImg_' + currentTime + '.jpg');
   } else if( type === 'video'){
     camera.set('output', videoPath + 'video.h264');
@@ -70,7 +72,7 @@ var applyMode = function(mode, callback){
         });
       } 
       if( typeof callback == 'function'){
-		var time = currentTime;
+		var time = prevTime;
         setTimeout( function(){ 
 			camera.on('exit', onExit); 
 			

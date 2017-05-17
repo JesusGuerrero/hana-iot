@@ -6,11 +6,12 @@ var gpio = require('onoff').Gpio,
     led3 = new gpio(24, 'out'),
     led4 = new gpio(16, 'out'),
     motion = new gpio(21, 'in', 'both'),
-    buzzer = new gpio(17, 'out');
+    buzzer = new gpio(18, 'out');
 
 var ledState = 0
 	, smsControl = 0
 	, count = 0
+	, liveState = 0
 	, imageData = [];
 
 // Twilio, the SMS system servicegit
@@ -20,9 +21,20 @@ var twilio = require('twilio');
 var client = new twilio(accountSid, authToken);
 
 //ip address
-process.env.NODE_URL='192.168.0.19';
+process.env.NODE_URL='hana.local';
 
 require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
+
+  //Serve Static Files
+  server.route({
+    method: 'GET',
+    path: '/{param*}',
+    handler: {
+      directory: {
+        path: ['../public/']
+      }
+    }
+  });
 
   //In-Memory Data Structure
   server.route({
@@ -69,23 +81,25 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 	motion.watch( function(err, val) {
 		if( val ) {
 			console.log('Motion On');
-			camera.setMode('photo', function( imgUrl ){
-			  console.log('taking photo');
-			  imageData.push({url: imgUrl, id: count++, unread: 1});
-			  camera.start(); 
-			});
-			if( smsControl ) {
-				client.messages.create({
-					body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
-					to: '+14152143706',  // Text this number
-					from: '+18436477132' // From a valid Twilio number
-				}).then(function(message){
-					console.log('SMS Sent: ', message.sid);
-					smsControl = 0;
-				}, function(err){ 
-					console.log('SMS ERROR: ', err);
+			if( !liveState ) {
+				camera.setMode('photo', function( imgUrl ){
+				  console.log('taking photo');
+				  imageData.push({url: imgUrl, id: count++, unread: 1});
+				  camera.start(); 
 				});
-			} 
+				if( smsControl ) {
+					client.messages.create({
+						body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
+						to: '+14152143706',  // Text this number
+						from: '+18436477132' // From a valid Twilio number
+					}).then(function(message){
+						console.log('SMS Sent: ', message.sid);
+						smsControl = 0;
+					}, function(err){ 
+						console.log('SMS ERROR: ', err);
+					});
+				} 
+			}
 		} else {
 			console.log('Motion Off');
 		}
@@ -101,9 +115,9 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 	  console.log("turn on light ", ledState);
 	  ledState = !ledState;
 	  led1.writeSync(ledState ? 1 : 0);
-	  //led2.writeSync(ledState);
-	  //led3.writeSync(ledState);
-	  //led4.writeSync(ledState);
+	  led2.writeSync(ledState ? 1 : 0);
+	  led3.writeSync(ledState ? 1 : 0);
+	  led4.writeSync(ledState ? 1 : 0);
 	});
 	//Buzzer
 	socket.on('event:buzzer', function () {
@@ -126,12 +140,14 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 	socket.on('event:camera:photo', function(){
 		camera.setMode('photo', function( imgUrl ){
 		  console.log('taking photo');
+		  liveState = 0;
 		  imageData.push({url: imgUrl, id: count++, unread: 1});
 		  camera.start(); 
 		});
 	});
 	socket.on('event:camera:live', function(){
 		console.log('going live');
+		liveState = 1;
 		camera.setMode('live');
 	});
   });
