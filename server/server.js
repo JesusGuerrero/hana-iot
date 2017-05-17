@@ -17,9 +17,8 @@ var ledState = 0,
    var twilio = require('twilio');
    var client = new twilio(accountSid, authToken);
 
-
 //ip address
-process.env.NODE_URL='192.168.0.18';
+process.env.NODE_URL='192.168.0.19';
 
 require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 
@@ -32,6 +31,17 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
       }
     }
   });
+  
+/*
+    client.messages.create({
+        body: 'Server Running',
+        to: '+14159990504',  // Text this number
+        from: '+14159694541' // From a valid Twilio number
+    }).then(function(message){
+        console.log(message.sid)
+        console.log('message sent');
+    });
+*/
 
   var io = require('socket.io').listen( server.listener );
   io.on('connection', function( socket ) {
@@ -55,7 +65,6 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
               buzzer.writeSync(0);
           }, 3000);
       });
-      
       
       socket.on('event:textSMS', function () {
           textControl = !textControl;
@@ -103,29 +112,12 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
       //     }
       // });
 
-
       //Raspicam
       socket.on('event:camera:photo', function(){
-        
-          camera.setMode('photo', function(){
-	    console.log('inside callback');
-	    camera.start(); 
-          });
-        
-      });
-      socket.on('event:camera:video', function(){
-        if( cameraMode !== 'video') {
-          camera.setMode('video');
-          cameraMode = 'video';
-        }
-        camera.start();
-      });
-      socket.on('event:camera:timelapse', function(){
-        if( cameraMode !== 'timelapse') {
-          camera.setMode('timelapse');
-          cameraMode = 'timelapse';
-        }
-        camera.start();
+        camera.setMode('photo', function(){
+	      console.log('inside callback');
+	      camera.start(); 
+        });
       });
       socket.on('event:camera:live', function(){
 		console.log('going live');
