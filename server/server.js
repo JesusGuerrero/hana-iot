@@ -9,7 +9,8 @@ var gpio = require('onoff').Gpio,
     motion = new gpio(21, 'in', 'both'),
     buzzer = new gpio(18, 'out');
 
-var ledState = 0;
+var ledState = 0,
+    textControl = 0;
 
 
 // Twilio, the SMS system servicegit
@@ -61,17 +62,24 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
               buzzer.writeSync(0);
           }, 3000);
       });
-      socket.on('event:textSMS:true', function () {
-	     console.log("Receive turn on SMS signal");
-          motion.watch( function(err, val) {
-              if( err ) { console.log('Motion in 21 Error'); return; }
+      socket.on('event:textSMS', function () {
+          textControl = !textControl;
+          if (textControl){
+              console.log("Receive turn on SMS signal");
+              motion.watch( function(err, val) {
+                  if( err ) { console.log('Motion in 21 Error'); return; }
 
-              console.log('Motion in 21 is ' +(val ? 'ACTIVE' : 'INACTIVE') + ' : ' + new Date().toLocaleString() );
-              if( io ) {
-                  io.sockets.emit('event:motion', val);
-                  console.log('Motion in ' + val);
-              }
-          });
+                  console.log('Motion in 21 is ' +(val ? 'ACTIVE' : 'INACTIVE') + ' : ' + new Date().toLocaleString() );
+                  if( io ) {
+                      io.sockets.emit('event:motion', val);
+                      console.log('Motion in ' + val);
+                  }
+              });
+          }else{
+              console.log("turn off SMS");
+          }
+
+
       });
 
 
