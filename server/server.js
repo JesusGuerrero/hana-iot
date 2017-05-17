@@ -11,7 +11,6 @@ var gpio = require('onoff').Gpio,
 var ledState = 0,
     textControl = 0;
 
-
 // Twilio, the SMS system servicegit
    var accountSid = 'AC70731db98f0a7ad0863697704e8e4716';
    var authToken = '281c19c81e4762364b53524f5bf7eadc';
@@ -20,7 +19,7 @@ var ledState = 0,
 
 
 //ip address
-process.env.NODE_URL='hana.local';
+process.env.NODE_URL='192.168.0.18';
 
 require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 
@@ -34,9 +33,6 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
     }
   });
 
-
-
-
   var io = require('socket.io').listen( server.listener );
   io.on('connection', function( socket ) {
     console.log('connection: ', socket.id );
@@ -45,13 +41,11 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
       //LED
       socket.on('event:light', function () {
           console.log("turn on light ");
-          ledState = ledState + 1;
-
-          console.log(ledState);
-          led1.writeSync(ledState % 2);
-          led2.writeSync(ledState % 2);
-          led3.writeSync(ledState % 2);
-          led4.writeSync(ledState % 2);
+          ledState = !ledState;
+          led1.writeSync(ledState);
+          led2.writeSync(ledState);
+          led3.writeSync(ledState);
+          led4.writeSync(ledState);
       });
       //Buzzer
       socket.on('event:buzzer', function () {
@@ -61,6 +55,7 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
               buzzer.writeSync(0);
           }, 3000);
       });
+      
       
       socket.on('event:textSMS', function () {
           textControl = !textControl;
@@ -133,7 +128,7 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
         camera.start();
       });
       socket.on('event:camera:live', function(){
-	console.log('going live');
+		console.log('going live');
         camera.setMode('live');
       });
   
@@ -142,7 +137,7 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
     //socket.on('myCustomMessage', function( val ){ console.log( val ); });
 
   });
-    camera.setSocket( io );
+  camera.setSocket( io );
 
   camera.setSocket( io );
 
