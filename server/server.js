@@ -12,6 +12,7 @@ var ledState = 0
 	, smsControl = 0
 	, count = 0
 	, liveState = 0
+	, motionWatch = 0
 	, imageData = [];
 
 // Twilio, the SMS system servicegit
@@ -81,12 +82,14 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 	motion.watch( function(err, val) {
 		if( val ) {
 			console.log('Motion On');
-			if( !liveState ) {
+			if( !liveState && motionWatch ) {
 				camera.setMode('photo', function( imgUrl ){
 				  console.log('taking photo');
 				  imageData.push({url: imgUrl, id: count++, unread: 1});
 				  camera.start(); 
 				});
+				motionWatch = 0;
+				if( io ) { io.sockets.emit('event:motion:off'); }
 				if( smsControl ) {
 					client.messages.create({
 						body: 'Peeper Feeder detects some motions, check it out on Peeper App ',
@@ -95,9 +98,10 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 					}).then(function(message){
 						console.log('SMS Sent: ', message.sid);
 						smsControl = 0;
+						if( io ) { io.sockets.emit('event:sms:off'); }
 					}, function(err){ 
 						console.log('SMS ERROR: ', err);
-					});
+					}); console.log('SENT SMS MESSAGE');
 				} 
 			}
 		} else {
@@ -136,6 +140,11 @@ require('mahrio').runServer( process.env, __dirname ).then( function( server ) {
 		  console.log("turn off SMS");
 	  }
 	});
+	socket.on('event:motion:watch', function( val ) {
+		motionWatch = val ? 1 : 0;
+		if( motionWatch ) { console.log('listening for motion'); }
+		else { console.log('not listening for motion'); }
+	})
 	//Raspicam
 	socket.on('event:camera:photo', function(){
 		camera.setMode('photo', function( imgUrl ){

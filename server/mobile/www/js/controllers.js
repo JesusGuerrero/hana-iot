@@ -43,11 +43,20 @@ angular.module('starter.controllers', [])
 
   .controller('DeviceCtrl', function($scope) {})
 
-  .controller('RecordCtrl', function($scope, Records) {
-    $scope.records = Records.all();
-    $scope.remove = function(record) {
-      Records.remove(record);
-    };
+  .controller('RecordCtrl', function($scope, Records, $http) {
+    //$scope.records = Records.all();
+    //$scope.remove = function(record) {
+    //  Records.remove(record);
+    //};
+    $scope.$on('$ionicView.enter', function(e) {
+		$http.get('http://hana.local:6085/photos').then(function(res){
+			if( res.data && res.data.images && res.data.images.length > 1 ) {
+				$scope.records = res.data.images;
+				$scope.records.splice(0,1);
+			}
+		
+		});
+	});
   })
     .controller('RecordDetailCtrl', function($scope, $stateParams, Records) {
       $scope.record = Records.get($stateParams.recordId);
@@ -70,6 +79,18 @@ angular.module('starter.controllers', [])
 		socket.emit('event:textSMS', $scope.pushNotification.checked);
     };
     $scope.pushNotification = { checked: false };
+    
+    $scope.motionTriggerChange = function(){
+		console.log('Motion Trigger Change', $scope.motionTrigger.checked);
+		socket.emit('event:motion:watch', $scope.motionTrigger.checked);
+	};
+	$scope.motionTrigger = { checked: false };
+	socket.on('event:motion:off', function(){
+		$scope.motionTrigger = { checked: false };
+	});
+	socket.on('event:sms:off', function(){
+		$scope.pushNotification = { checked: false };
+	});
   })
 
   .controller("AlertDetailCtrl", function($scope) {})

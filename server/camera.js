@@ -45,9 +45,10 @@ var applyMode = function(mode, callback){
         camera = new RaspiCam({
           mode: 'photo',
           output: imagePath + 'image.jpg',
-          height: 720,
-          width: 1280,
-          quality: 100
+          height: 480,
+          width: 640,
+          quality: 100,
+          t: 500
         });
         currentMode = 'photo';
       } else if( mode === 'timelapse' ){
@@ -72,11 +73,10 @@ var applyMode = function(mode, callback){
         });
       } 
       if( typeof callback == 'function'){
-		var time = prevTime;
+		var time = currentTime;
         setTimeout( function(){ 
 			camera.on('exit', onExit); 
 			
-			console.log( time );
 			callback( '/images/myImg_' + time + '.jpg'); 
 		}, 1000 );
       }

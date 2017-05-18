@@ -6,6 +6,10 @@
                   ng-change="pushNotificationChange()">
         SMS
       </ion-toggle>
+      <ion-toggle class="item my-toggle" ng-model="motionTrigger.checked"
+                  ng-change="motionTriggerChange()">
+        Motion Sense
+      </ion-toggle>
       <a class="item item-last" href="#/tab/setting-alert">Alert type
         <span class="item-note">Text only</span>
       </a>
